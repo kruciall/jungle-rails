@@ -1,7 +1,9 @@
 class OrdersController < ApplicationController
 
   def show
+
     @order = Order.find(params[:id])
+    end 
   end
 
   def create
@@ -22,6 +24,7 @@ class OrdersController < ApplicationController
   private
 
   def empty_cart!
+
     # empty hash means no products in cart :)
     update_cart({})
   end
@@ -42,6 +45,7 @@ class OrdersController < ApplicationController
       stripe_charge_id: stripe_charge.id, # returned by stripe
     )
 
+
     enhanced_cart.each do |entry|
       product = entry[:product]
       quantity = entry[:quantity]
@@ -55,5 +59,4 @@ class OrdersController < ApplicationController
     order.save!
     order
   end
-
 end
