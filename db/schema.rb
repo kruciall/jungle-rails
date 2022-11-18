@@ -21,6 +21,11 @@ ActiveRecord::Schema.define(version: 2021_06_26_062916) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "favorites", id: :serial, force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "map_id"
+  end
+
   create_table "line_items", force: :cascade do |t|
     t.bigint "order_id"
     t.bigint "product_id"
@@ -33,12 +38,29 @@ ActiveRecord::Schema.define(version: 2021_06_26_062916) do
     t.index ["product_id"], name: "index_line_items_on_product_id"
   end
 
+  create_table "maps", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.integer "user_id"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "img_url", limit: 255
+  end
+
   create_table "orders", force: :cascade do |t|
     t.integer "total_cents"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "stripe_charge_id"
     t.string "email"
+  end
+
+  create_table "points", id: :serial, force: :cascade do |t|
+    t.string "title", limit: 255, null: false
+    t.string "image", limit: 255, null: false
+    t.text "description"
+    t.integer "map_id"
+    t.float "latitude", null: false
+    t.float "longitude", null: false
   end
 
   create_table "products", force: :cascade do |t|
@@ -53,7 +75,18 @@ ActiveRecord::Schema.define(version: 2021_06_26_062916) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  create_table "users", id: :serial, force: :cascade do |t|
+    t.string "first_name", limit: 255, null: false
+    t.string "last_name", limit: 255, null: false
+    t.string "username", limit: 255, null: false
+    t.string "password", limit: 255, null: false
+  end
+
+  add_foreign_key "favorites", "maps", name: "favorites_map_id_fkey"
+  add_foreign_key "favorites", "users", name: "favorites_user_id_fkey"
   add_foreign_key "line_items", "orders"
   add_foreign_key "line_items", "products"
+  add_foreign_key "maps", "users", name: "maps_user_id_fkey"
+  add_foreign_key "points", "maps", name: "points_map_id_fkey"
   add_foreign_key "products", "categories"
 end
